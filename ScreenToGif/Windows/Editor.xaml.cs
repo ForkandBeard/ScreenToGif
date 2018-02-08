@@ -5055,9 +5055,11 @@ namespace ScreenToGif.Windows
             try
             {
                 var drive = new DriveInfo(UserSettings.All.TemporaryFolder.Substring(0, 1));
-                var spaceLeft = drive.AvailableFreeSpace > 0 ? drive.AvailableFreeSpace * 100d / (double)drive.TotalSize : 100; //Get the percentage of space left.
+                var spaceLeftInPC = drive.AvailableFreeSpace > 0 ? drive.AvailableFreeSpace * 100d / (double)drive.TotalSize : 100; //Get the percentage of space left.
+                var spaceLeftInGB = (((drive.AvailableFreeSpace / 1024f) / 1024f) / 1024f); // Convert to KB, MB, then GB.
 
-                if (spaceLeft < 10)
+                // Only report LowSpace if under 10% and less than 1.5 GB remain.
+                if (spaceLeftInPC < 10 && spaceLeftInGB < 1.5f)
                     StatusList.Error(string.Format(this.TextResource("Editor.Warning.LowSpace"), (int)spaceLeft), null, () => { new Options(3).ShowDialog(); });
             }
             catch (Exception ex)
